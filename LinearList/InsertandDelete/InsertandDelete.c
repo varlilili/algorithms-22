@@ -3,61 +3,69 @@
  * 定义一个数组，长度为20，其中的数据为1，2，…，10。
  * 请编写线性表的插入算法，分别在第3位插入11，在第5位插入12，并删除第2位数据元素。
  * 
- * @version 1.0
- * @date 2022-03-10 23:23
+ * @version 2.0
+ * @date 2022-03-13 17:00
 */
 
 #include<stdio.h>
-#define MAXMUM 20 // 控制线性表数组长度
+// CAPACITY 控制数组数据元素的容量
+#define CAPACITY 20
 
-// 线性表结构体
-    // arr[MAXMUM] 用来存放数组元素
-    // last 最后一个元素的自然序列编号（是第几个元素就编号为几）
+/**
+ * @brief 线性表结构体
+ * 
+ */
 typedef struct LinearList {
-    int arr[MAXMUM];
-    int last;
+    int array[CAPACITY];
+    // size 记录数组实际存在元素的数量 (size = index + 1)
+    int size;
 } L;
 
-// 插入算法
-    // sn = serial number 待插入位置的自然序列编号（serial number 序列号、编号的意思，起始数字为自然数字，即从1开始，1，2，3……）
-    // v = value 待插入的数据元素的值
-void insert(struct LinearList *L, int sn, int v)
+// sn = serial number 待插入位置的自然排序编号（serial number 序列号、编号的意思，起始数字从1开始，1，2，3……）
+
+/**
+ * @brief 插入算法
+ * 
+ * @param L 需要插入元素的线性表结构体
+ * @param sn 待插入元素的位置（自然排序编号，非索引排序编号）
+ * @param e 待插入元素
+ */
+void insert(struct LinearList *L, int sn, int e)
 {
-    // 自然序列范围 (用集合表示)：[sn, last]，如[3, 11]
-    // 对应数组下标范围（用集合表示）：[sn-1, last-1]，如[2, 10]
-    // 循环的自然序列范围：[sn+1, last+1] -> 对应数组下标范围：[sn, last]
-    // i = index，表示数组下标
-    for(int i = L->last; i >= sn; i--)
-        L->arr[i] = L->arr[i-1];
-    // sn = 3，表示数组中的第三个元素，该元素对应的下标则是 sn-1 = 2，
-    // 在第三个元素前插入一个元素，则被插入的元素变成第三个元素，存放该元素的数组下标就是 sn-1 = 2；
-    L->arr[sn-1] = v;
-    // 插入后数组长度加一
-    L->last++;
+    for(int i = L->size; i >= sn; i--)
+        L->array[i] = L->array[i-1];
+    L->array[sn-1] = e;
+    L->size++;
 }
 
-// 删除算法
-void delete (struct LinearList *L, int x)
+/**
+ * @brief 删除算法
+ * 
+ * @param L 需要删除元素的线性表结构体
+ * @param sn 待删除元素的位置（自然排序编号，非索引排序编号）
+ */
+void delete (struct LinearList *L, int sn)
 {
-    // x 表示待删除元素的自然序列编号
-    // 循环的自然序列范围：[x, last-1] -> 对应的数组下标范围：[x-1, last-2]
-    for(int j = x-1; j <= L->last-2; j++)
-        L->arr[j] = L->arr[j+1];
-    // 删除后数组长度减一
-    L->last--;
+    for(int j = sn; j <= L->size-1; j++)
+        L->array[j-1] = L->array[j];
+    L->size--;
 }
 
-// 入口
+/**
+ * @brief 测试用例
+ * 
+ * @return int 
+ */
 int main(void)
 {
     // 声明一个线性表 l
     L l;
 
-    // 向线性表输入数据
-    l.last = 10;
-    for(int i = 0; i < 10; i++)
+    // 输入
+    l.size = 10;
+    for(int i = 0; i < l.size; i++)
     {
-        l.arr[i] = i+1;
+        l.array[i] = i+1;
     }
 
     // 进行插入和删除操作
@@ -65,10 +73,15 @@ int main(void)
     insert(&l, 5, 12);
     delete(&l, 2);
 
-    //输出结果
-    for (int i = 0; i < l.last; i++)
+    //输出
+    printf("array, size = %d \n [", l.size);
+    for (int i = 0; i < l.size; i++)
     {
-        printf("%d\t", l.arr[i]);
+        printf("%d", l.array[i]);
+        if(i != l.size - 1)
+            printf(", ");
     }
+    printf("]");
+
     return 0;
 }
